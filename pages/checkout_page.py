@@ -1,4 +1,4 @@
-"""Page object del flujo de checkout (datos, resumen y confirmación)."""
+﻿"""Page object del flujo de checkout (datos, resumen y confirmación)."""
 import allure
 from selenium.webdriver.common.by import By
 
@@ -17,15 +17,23 @@ class CheckoutPage(BasePage):
 
     @allure.step("Completar datos de envío")
     def completar_datos(self, nombre, apellido, codigo_postal):
+        from selenium.webdriver.support import expected_conditions as EC
         self.escribir(self.NOMBRE, nombre)
         self.escribir(self.APELLIDO, apellido)
         self.escribir(self.CODIGO_POSTAL, codigo_postal)
-        self.click(self.BOTON_CONTINUAR)
+        self.click_y_esperar(
+            self.BOTON_CONTINUAR,
+            EC.any_of(
+                EC.url_contains("checkout-step-two.html"),
+                EC.visibility_of_element_located(self.MENSAJE_ERROR),
+            ),
+        )
         return self
 
     @allure.step("Confirmar la compra")
     def finalizar_compra(self):
-        self.click(self.BOTON_FINALIZAR)
+        from selenium.webdriver.support import expected_conditions as EC
+        self.click_y_esperar(self.BOTON_FINALIZAR, EC.url_contains("checkout-complete.html"))
         return self
 
     def obtener_error(self):

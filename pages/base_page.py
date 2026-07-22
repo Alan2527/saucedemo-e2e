@@ -1,4 +1,5 @@
-"""Página base: helpers de espera e interacción que heredan todos los page objects."""
+﻿"""Página base: helpers de espera e interacción que heredan todos los page objects."""
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -19,6 +20,25 @@ class BasePage:
 
     def click(self, localizador):
         self.wait.until(EC.element_to_be_clickable(localizador)).click()
+
+    def click_y_esperar(self, localizador, condicion_de_llegada, reintentos=2):
+        """Click con verificacion y reintento.
+
+        SauceDemo es una SPA (Angular): en Chrome headless, ocasionalmente el
+        listener de click aun no esta adjunto en el instante exacto en que
+        Selenium lo ejecuta, produciendo un "click muerto" que no navega pero
+        tampoco lanza error. Este helper verifica que la navegacion realmente
+        ocurrio y reintenta el click si no fue asi, en lugar de asumir exito.
+        """
+        ultimo_error = None
+        for _ in range(reintentos):
+            self.click(localizador)
+            try:
+                self.wait.until(condicion_de_llegada)
+                return
+            except TimeoutException as error:
+                ultimo_error = error
+        raise ultimo_error
 
     def escribir(self, localizador, texto):
         elemento = self.encontrar(localizador)

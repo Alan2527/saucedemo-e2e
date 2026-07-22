@@ -1,4 +1,4 @@
-"""Page object del catálogo de productos."""
+﻿"""Page object del catálogo de productos."""
 import allure
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import Select
@@ -55,6 +55,7 @@ class InventoryPage(BasePage):
 
     @allure.step("Ir al carrito")
     def ir_al_carrito(self):
+        from selenium.webdriver.support import expected_conditions as EC
         from pages.cart_page import CartPage
-        self.click(self.LINK_CARRITO)
+        self.click_y_esperar(self.LINK_CARRITO, EC.url_contains("cart.html"))
         return CartPage(self.driver)

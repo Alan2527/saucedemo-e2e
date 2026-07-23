@@ -1,1 +1,1 @@
-[]
+[{"values":["SauceDemo (demo publica)"],"name":"Entorno"},{"values":["Chrome (Headless)"],"name":"Navegador"},{"values":["https://www.saucedemo.com/"],"name":"URL"},{"values":["Pytest+Selenium"],"name":"Framework"}]

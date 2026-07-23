@@ -1,0 +1,2 @@
+Cantidad de productos OK: 6
+Imágenes únicas por producto OK

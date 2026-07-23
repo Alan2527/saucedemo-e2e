@@ -1,12 +1,14 @@
-﻿"""Page object del catálogo de productos."""
-import allure
+"""Page Object del catálogo de productos (inventario)."""
+
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import Select
+from selenium.webdriver.support.ui import WebDriverWait, Select
+from selenium.webdriver.support import expected_conditions as EC
 
-from pages.base_page import BasePage
+from helpers import safe_click, click_y_esperar, texto_de
 
 
-class InventoryPage(BasePage):
+class InventoryPage:
+    # --- Locators ---
     TITULO = (By.CSS_SELECTOR, ".title")
     ITEMS = (By.CSS_SELECTOR, ".inventory_item")
     NOMBRES = (By.CSS_SELECTOR, ".inventory_item_name")
@@ -16,46 +18,52 @@ class InventoryPage(BasePage):
     BADGE_CARRITO = (By.CSS_SELECTOR, ".shopping_cart_badge")
     LINK_CARRITO = (By.CSS_SELECTOR, ".shopping_cart_link")
 
+    def __init__(self, driver, timeout=20):
+        self.driver = driver
+        self.wait = WebDriverWait(driver, timeout)
+
+    # --- Datos ---
     def titulo(self):
-        return self.texto_de(self.TITULO)
+        return texto_de(self.wait, self.TITULO)
 
     def cantidad_de_productos(self):
-        return len(self.encontrar_todos(self.ITEMS))
+        self.wait.until(EC.presence_of_element_located(self.ITEMS))
+        return len(self.driver.find_elements(*self.ITEMS))
 
     def nombres_de_productos(self):
-        return [e.text for e in self.encontrar_todos(self.NOMBRES)]
+        self.wait.until(EC.presence_of_element_located(self.NOMBRES))
+        return [e.text for e in self.driver.find_elements(*self.NOMBRES)]
 
     def precios_de_productos(self):
-        return [float(e.text.replace("$", "")) for e in self.encontrar_todos(self.PRECIOS)]
+        self.wait.until(EC.presence_of_element_located(self.PRECIOS))
+        return [float(e.text.replace("$", "")) for e in self.driver.find_elements(*self.PRECIOS)]
 
     def urls_de_imagenes(self):
-        return [e.get_attribute("src") for e in self.encontrar_todos(self.IMAGENES)]
-
-    @allure.step("Ordenar productos por «{criterio}»")
-    def ordenar_por(self, criterio):
-        Select(self.encontrar(self.SELECTOR_ORDEN)).select_by_value(criterio)
-        return self
-
-    @allure.step("Agregar «{nombre_producto}» al carrito")
-    def agregar_al_carrito(self, nombre_producto):
-        slug = nombre_producto.lower().replace(" ", "-")
-        self.click((By.ID, f"add-to-cart-{slug}"))
-        return self
-
-    @allure.step("Quitar «{nombre_producto}» del carrito")
-    def quitar_del_carrito(self, nombre_producto):
-        slug = nombre_producto.lower().replace(" ", "-")
-        self.click((By.ID, f"remove-{slug}"))
-        return self
+        self.wait.until(EC.presence_of_element_located(self.IMAGENES))
+        return [e.get_attribute("src") for e in self.driver.find_elements(*self.IMAGENES)]
 
     def items_en_badge(self):
-        if not self.es_visible(self.BADGE_CARRITO):
+        elementos = self.driver.find_elements(*self.BADGE_CARRITO)
+        if not elementos or not elementos[0].is_displayed():
             return 0
-        return int(self.texto_de(self.BADGE_CARRITO))
+        return int(elementos[0].text)
 
-    @allure.step("Ir al carrito")
+    # --- Acciones ---
+    def ordenar_por(self, criterio):
+        Select(self.wait.until(EC.element_to_be_clickable(self.SELECTOR_ORDEN))).select_by_value(criterio)
+        return self
+
+    def agregar_al_carrito(self, nombre_producto):
+        slug = nombre_producto.lower().replace(" ", "-")
+        safe_click(self.wait, (By.ID, f"add-to-cart-{slug}"))
+        return self
+
+    def quitar_del_carrito(self, nombre_producto):
+        slug = nombre_producto.lower().replace(" ", "-")
+        safe_click(self.wait, (By.ID, f"remove-{slug}"))
+        return self
+
     def ir_al_carrito(self):
-        from selenium.webdriver.support import expected_conditions as EC
+        click_y_esperar(self.wait, self.LINK_CARRITO, EC.url_contains("cart.html"))
         from pages.cart_page import CartPage
-        self.click_y_esperar(self.LINK_CARRITO, EC.url_contains("cart.html"))
         return CartPage(self.driver)

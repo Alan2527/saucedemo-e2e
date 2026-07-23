@@ -1,11 +1,14 @@
-﻿"""Page object del flujo de checkout (datos, resumen y confirmación)."""
-import allure
+"""Page Object del flujo de checkout (datos, resumen y confirmación)."""
+
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-from pages.base_page import BasePage
+from helpers import safe_send_keys, click_y_esperar, texto_de
 
 
-class CheckoutPage(BasePage):
+class CheckoutPage:
+    # --- Locators ---
     NOMBRE = (By.ID, "first-name")
     APELLIDO = (By.ID, "last-name")
     CODIGO_POSTAL = (By.ID, "postal-code")
@@ -15,13 +18,16 @@ class CheckoutPage(BasePage):
     TOTAL = (By.CSS_SELECTOR, ".summary_total_label")
     CONFIRMACION = (By.CSS_SELECTOR, ".complete-header")
 
-    @allure.step("Completar datos de envío")
+    def __init__(self, driver, timeout=20):
+        self.driver = driver
+        self.wait = WebDriverWait(driver, timeout)
+
     def completar_datos(self, nombre, apellido, codigo_postal):
-        from selenium.webdriver.support import expected_conditions as EC
-        self.escribir(self.NOMBRE, nombre)
-        self.escribir(self.APELLIDO, apellido)
-        self.escribir(self.CODIGO_POSTAL, codigo_postal)
-        self.click_y_esperar(
+        safe_send_keys(self.wait, self.NOMBRE, nombre)
+        safe_send_keys(self.wait, self.APELLIDO, apellido)
+        safe_send_keys(self.wait, self.CODIGO_POSTAL, codigo_postal)
+        click_y_esperar(
+            self.wait,
             self.BOTON_CONTINUAR,
             EC.any_of(
                 EC.url_contains("checkout-step-two.html"),
@@ -30,17 +36,15 @@ class CheckoutPage(BasePage):
         )
         return self
 
-    @allure.step("Confirmar la compra")
     def finalizar_compra(self):
-        from selenium.webdriver.support import expected_conditions as EC
-        self.click_y_esperar(self.BOTON_FINALIZAR, EC.url_contains("checkout-complete.html"))
+        click_y_esperar(self.wait, self.BOTON_FINALIZAR, EC.url_contains("checkout-complete.html"))
         return self
 
     def obtener_error(self):
-        return self.texto_de(self.MENSAJE_ERROR)
+        return texto_de(self.wait, self.MENSAJE_ERROR)
 
     def obtener_total(self):
-        return self.texto_de(self.TOTAL)
+        return texto_de(self.wait, self.TOTAL)
 
     def mensaje_de_confirmacion(self):
-        return self.texto_de(self.CONFIRMACION)
+        return texto_de(self.wait, self.CONFIRMACION)

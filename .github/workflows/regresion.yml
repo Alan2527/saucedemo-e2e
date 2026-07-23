@@ -34,9 +34,9 @@ jobs:
         continue-on-error: true
         run: |
           if [ "${{ github.event.inputs.suite || 'todas' }}" = "todas" ]; then
-            pytest --alluredir=allure-results
+            pytest
           else
-            pytest -m "${{ github.event.inputs.suite }}" --alluredir=allure-results
+            pytest -m "${{ github.event.inputs.suite }}"
           fi
 
       - name: Recuperar historial previo de gh-pages

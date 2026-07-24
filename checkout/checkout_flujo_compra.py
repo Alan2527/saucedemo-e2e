@@ -46,6 +46,11 @@ def test_compra_exitosa(login_estandar):
 @allure.feature("Checkout")
 @allure.story("Validaciones de formulario")
 @allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""
+Intenta avanzar el checkout dejando el campo Nombre vacío y valida que el
+formulario lo exige, mostrando "First Name is required" en vez de dejar
+avanzar el flujo con datos incompletos.
+""")
 def test_nombre_requerido(login_estandar):
     with allure.step("1. Avanzar al checkout sin completar el nombre"):
         checkout = (
@@ -64,6 +69,11 @@ def test_nombre_requerido(login_estandar):
 @allure.feature("Checkout")
 @allure.story("Validaciones de formulario")
 @allure.severity(allure.severity_level.NORMAL)
+@allure.description("""
+Intenta avanzar el checkout dejando el campo Código Postal vacío y valida
+que el formulario lo exige, mostrando "Postal Code is required" en vez de
+dejar avanzar el flujo con datos incompletos.
+""")
 def test_codigo_postal_requerido(login_estandar):
     with allure.step("1. Avanzar al checkout sin completar el código postal"):
         checkout = (

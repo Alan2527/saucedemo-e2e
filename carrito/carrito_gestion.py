@@ -5,6 +5,10 @@ import allure
 @allure.feature("Carrito")
 @allure.story("Alta de productos")
 @allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""
+Agrega "Sauce Labs Backpack" al carrito desde el catálogo y valida que el
+badge del ícono de carrito se actualice a 1, reflejando el alta en tiempo real.
+""")
 def test_agregar_producto(login_estandar):
     with allure.step("1. Agregar un producto al carrito"):
         login_estandar.agregar_al_carrito("sauce labs backpack")
@@ -17,6 +21,11 @@ def test_agregar_producto(login_estandar):
 @allure.feature("Carrito")
 @allure.story("Alta de productos")
 @allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""
+Agrega "Sauce Labs Backpack" al carrito y navega a la página del carrito,
+validando que el producto agregado efectivamente aparezca listado ahí (no
+solo que el badge suba, sino que el contenido real del carrito sea correcto).
+""")
 def test_producto_en_carrito(login_estandar):
     with allure.step("1. Agregar producto e ir al carrito"):
         login_estandar.agregar_al_carrito("sauce labs backpack")
@@ -30,6 +39,11 @@ def test_producto_en_carrito(login_estandar):
 @allure.feature("Carrito")
 @allure.story("Baja de productos")
 @allure.severity(allure.severity_level.NORMAL)
+@allure.description("""
+Agrega "Sauce Labs Bike Light" al carrito y luego lo quita desde el mismo
+catálogo, validando que el badge del carrito vuelva a cero (sin quedar un
+contador "fantasma" tras la baja).
+""")
 def test_quitar_producto(login_estandar):
     with allure.step("1. Agregar y luego quitar el mismo producto"):
         login_estandar.agregar_al_carrito("sauce labs bike-light")
@@ -43,6 +57,11 @@ def test_quitar_producto(login_estandar):
 @allure.feature("Carrito")
 @allure.story("Alta de productos")
 @allure.severity(allure.severity_level.NORMAL)
+@allure.description("""
+Agrega tres productos distintos al carrito en la misma sesión y valida que el
+badge acumule correctamente el total (3), en vez de sobreescribir o perder
+el conteo de altas previas.
+""")
 def test_multiples_productos(login_estandar):
     with allure.step("1. Agregar tres productos distintos"):
         login_estandar.agregar_al_carrito("sauce labs backpack")

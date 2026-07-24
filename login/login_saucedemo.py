@@ -8,6 +8,12 @@ from utils import config
 @allure.feature("Autenticación")
 @allure.story("Login exitoso")
 @allure.severity(allure.severity_level.BLOCKER)
+@allure.description("""
+Inicia sesión con el usuario estándar (standard_user) y valida:
+Que el login redirige correctamente al inventario (inventory.html).
+Que el título de la página es "Products".
+Que el catálogo renderiza al menos un producto.
+""")
 def test_login_exitoso(driver):
     with allure.step("1. Iniciar sesión con usuario estándar"):
         inventario = LoginPage(driver).abrir().iniciar_sesion(
@@ -24,6 +30,11 @@ def test_login_exitoso(driver):
 @allure.feature("Autenticación")
 @allure.story("Login rechazado")
 @allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""
+Intenta iniciar sesión con el usuario estándar pero una contraseña incorrecta,
+y valida que el sistema rechaza el acceso mostrando el mensaje de error
+"Username and password do not match any user in this service" (sin loguear).
+""")
 def test_password_incorrecta(driver):
     with allure.step("1. Iniciar sesión con contraseña incorrecta"):
         login = LoginPage(driver).abrir()
@@ -37,6 +48,11 @@ def test_password_incorrecta(driver):
 @allure.feature("Autenticación")
 @allure.story("Login rechazado")
 @allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""
+Intenta iniciar sesión con locked_out_user (usuario deshabilitado a propósito
+por SauceDemo) y valida que el sistema bloquea el acceso mostrando el mensaje
+"Sorry, this user has been locked out.", en vez de dejarlo pasar.
+""")
 def test_usuario_bloqueado(driver):
     with allure.step("1. Iniciar sesión con usuario bloqueado"):
         login = LoginPage(driver).abrir()
@@ -50,6 +66,11 @@ def test_usuario_bloqueado(driver):
 @allure.feature("Autenticación")
 @allure.story("Login rechazado")
 @allure.severity(allure.severity_level.NORMAL)
+@allure.description("""
+Intenta iniciar sesión sin completar usuario ni contraseña y valida que el
+formulario exige el campo obligatorio, mostrando "Username is required" en
+vez de intentar autenticar con campos vacíos.
+""")
 def test_campos_vacios(driver):
     with allure.step("1. Intentar iniciar sesión sin usuario ni contraseña"):
         login = LoginPage(driver).abrir()

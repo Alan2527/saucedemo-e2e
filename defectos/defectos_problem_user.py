@@ -14,6 +14,14 @@ import pytest
 @allure.feature("Auditoría de defectos (problem_user)")
 @allure.story("Catálogo")
 @allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""
+Documenta un defecto conocido: con problem_user, los 6 productos del
+catálogo muestran la misma imagen (rota/404) en vez de la imagen propia de
+cada producto. El test afirma el comportamiento CORRECTO (imágenes únicas) y
+está marcado xfail estricto: mientras el bug exista, aparece en el reporte
+como defecto documentado sin romper el pipeline; si se corrige, el pipeline
+avisa.
+""")
 @pytest.mark.xfail(reason="Defecto conocido: problem_user ve la misma imagen 404 en los 6 productos", strict=True)
 def test_imagenes_unicas(login_problema):
     with allure.step("1. Revisar las imágenes del catálogo"):
@@ -27,6 +35,12 @@ def test_imagenes_unicas(login_problema):
 @allure.feature("Auditoría de defectos (problem_user)")
 @allure.story("Catálogo")
 @allure.severity(allure.severity_level.NORMAL)
+@allure.description("""
+Documenta un defecto conocido: con problem_user, el selector de orden
+"Name (Z to A)" no reordena el catálogo. El test afirma el comportamiento
+CORRECTO (orden alfabético descendente real) y está marcado xfail estricto
+por la misma razón que el resto de esta suite.
+""")
 @pytest.mark.xfail(reason="Defecto conocido: problem_user no puede reordenar el catálogo", strict=True)
 def test_ordenamiento(login_problema):
     with allure.step("1. Intentar ordenar el catálogo Z→A"):
@@ -41,6 +55,13 @@ def test_ordenamiento(login_problema):
 @allure.feature("Auditoría de defectos (problem_user)")
 @allure.story("Checkout")
 @allure.severity(allure.severity_level.CRITICAL)
+@allure.description("""
+Documenta un defecto conocido: con problem_user, el campo Last Name del
+formulario de checkout no retiene el valor tipeado. El test completa el
+formulario con datos válidos y afirma el comportamiento CORRECTO (el flujo
+avanza al resumen de compra); está marcado xfail estricto por la misma razón
+que el resto de esta suite.
+""")
 @pytest.mark.xfail(reason="Defecto conocido: el campo Last Name de problem_user no retiene lo tipeado", strict=True)
 def test_apellido_en_checkout(login_problema):
     with allure.step("1. Completar el checkout con datos válidos"):

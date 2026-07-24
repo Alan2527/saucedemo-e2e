@@ -30,6 +30,11 @@ def test_cantidad_de_productos(login_estandar):
 @allure.feature("Catálogo")
 @allure.story("Ordenamiento")
 @allure.severity(allure.severity_level.NORMAL)
+@allure.description("""
+Selecciona el ordenamiento "Name (Z to A)" en el catálogo y valida que los
+nombres de los productos queden efectivamente en orden alfabético
+descendente, comparando el listado renderizado contra su versión ordenada.
+""")
 def test_orden_alfabetico_descendente(login_estandar):
     with allure.step("1. Ordenar el catálogo Z→A"):
         login_estandar.ordenar_por("za")
@@ -43,6 +48,11 @@ def test_orden_alfabetico_descendente(login_estandar):
 @allure.feature("Catálogo")
 @allure.story("Ordenamiento")
 @allure.severity(allure.severity_level.NORMAL)
+@allure.description("""
+Selecciona el ordenamiento "Price (low to high)" en el catálogo y valida que
+los precios de los productos queden en orden ascendente, comparando la lista
+de precios renderizada contra su versión ordenada.
+""")
 def test_orden_por_precio_ascendente(login_estandar):
     with allure.step("1. Ordenar el catálogo por precio (menor a mayor)"):
         login_estandar.ordenar_por("lohi")

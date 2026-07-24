@@ -1,6 +1,8 @@
 """Pruebas del carrito de compras."""
 import allure
 
+from helpers import paso
+
 
 @allure.feature("Carrito")
 @allure.story("Alta de productos")
@@ -10,11 +12,12 @@ Agrega "Sauce Labs Backpack" al carrito desde el catálogo y valida que el
 badge del ícono de carrito se actualice a 1, reflejando el alta en tiempo real.
 """)
 def test_agregar_producto(login_estandar):
-    with allure.step("1. Agregar un producto al carrito"):
-        login_estandar.agregar_al_carrito("sauce labs backpack")
-        allure.attach(login_estandar.driver.get_screenshot_as_png(), "1_Agregado", allure.attachment_type.PNG)
+    driver = login_estandar.driver
 
-    with allure.step("2. Validar badge del carrito"):
+    with paso(driver, "1. Agregar un producto al carrito", "1_Agregado"):
+        login_estandar.agregar_al_carrito("sauce labs backpack")
+
+    with paso(driver, "2. Validar badge del carrito", "2_Agregado"):
         assert login_estandar.items_en_badge() == 1
 
 
@@ -27,12 +30,14 @@ validando que el producto agregado efectivamente aparezca listado ahí (no
 solo que el badge suba, sino que el contenido real del carrito sea correcto).
 """)
 def test_producto_en_carrito(login_estandar):
-    with allure.step("1. Agregar producto e ir al carrito"):
+    driver = login_estandar.driver
+    carrito = None
+
+    with paso(driver, "1. Agregar producto e ir al carrito", "1_Carrito"):
         login_estandar.agregar_al_carrito("sauce labs backpack")
         carrito = login_estandar.ir_al_carrito()
-        allure.attach(carrito.driver.get_screenshot_as_png(), "1_Carrito", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar contenido del carrito"):
+    with paso(driver, "2. Validar contenido del carrito", "2_Carrito"):
         assert carrito.productos_en_carrito() == ["Sauce Labs Backpack"]
 
 
@@ -45,12 +50,13 @@ catálogo, validando que el badge del carrito vuelva a cero (sin quedar un
 contador "fantasma" tras la baja).
 """)
 def test_quitar_producto(login_estandar):
-    with allure.step("1. Agregar y luego quitar el mismo producto"):
+    driver = login_estandar.driver
+
+    with paso(driver, "1. Agregar y luego quitar el mismo producto", "1_Quitado"):
         login_estandar.agregar_al_carrito("sauce labs bike-light")
         login_estandar.quitar_del_carrito("sauce labs bike-light")
-        allure.attach(login_estandar.driver.get_screenshot_as_png(), "1_Quitado", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar que el badge quede en cero"):
+    with paso(driver, "2. Validar que el badge quede en cero", "2_Quitado"):
         assert login_estandar.items_en_badge() == 0
 
 
@@ -63,11 +69,12 @@ badge acumule correctamente el total (3), en vez de sobreescribir o perder
 el conteo de altas previas.
 """)
 def test_multiples_productos(login_estandar):
-    with allure.step("1. Agregar tres productos distintos"):
+    driver = login_estandar.driver
+
+    with paso(driver, "1. Agregar tres productos distintos", "1_TresProductos"):
         login_estandar.agregar_al_carrito("sauce labs backpack")
         login_estandar.agregar_al_carrito("sauce labs bolt-t-shirt")
         login_estandar.agregar_al_carrito("sauce labs onesie")
-        allure.attach(login_estandar.driver.get_screenshot_as_png(), "1_TresProductos", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar que el badge sume los tres"):
+    with paso(driver, "2. Validar que el badge sume los tres", "2_TresProductos"):
         assert login_estandar.items_en_badge() == 3

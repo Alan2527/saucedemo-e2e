@@ -1,6 +1,8 @@
 """Pruebas del catálogo de productos."""
 import allure
 
+from helpers import paso
+
 
 @allure.feature("Catálogo")
 @allure.story("Listado de productos")
@@ -12,17 +14,17 @@ problem_user — ver suite `defectos`).
 """)
 def test_cantidad_de_productos(login_estandar):
     resultados = []
+    driver = login_estandar.driver
 
-    with allure.step("1. Validar cantidad de productos en el catálogo"):
+    with paso(driver, "1. Validar cantidad de productos en el catálogo", "1_Catalogo"):
         cantidad = login_estandar.cantidad_de_productos()
         assert cantidad == 6, f"Se esperaban 6 productos, se encontraron {cantidad}"
         resultados.append(f"Cantidad de productos OK: {cantidad}")
 
-    with allure.step("2. Validar que cada producto tenga imagen propia"):
+    with paso(driver, "2. Validar que cada producto tenga imagen propia", "2_Catalogo"):
         urls = login_estandar.urls_de_imagenes()
         assert len(set(urls)) == len(urls), "Hay productos que comparten la misma imagen"
         resultados.append("Imágenes únicas por producto OK")
-        allure.attach(login_estandar.driver.get_screenshot_as_png(), "Catalogo", allure.attachment_type.PNG)
 
     allure.attach("\n".join(resultados), "Validaciones realizadas", allure.attachment_type.TEXT)
 
@@ -36,11 +38,12 @@ nombres de los productos queden efectivamente en orden alfabético
 descendente, comparando el listado renderizado contra su versión ordenada.
 """)
 def test_orden_alfabetico_descendente(login_estandar):
-    with allure.step("1. Ordenar el catálogo Z→A"):
-        login_estandar.ordenar_por("za")
-        allure.attach(login_estandar.driver.get_screenshot_as_png(), "1_OrdenZA", allure.attachment_type.PNG)
+    driver = login_estandar.driver
 
-    with allure.step("2. Validar orden alfabético descendente"):
+    with paso(driver, "1. Ordenar el catálogo Z→A", "1_OrdenZA"):
+        login_estandar.ordenar_por("za")
+
+    with paso(driver, "2. Validar orden alfabético descendente", "2_OrdenZA"):
         nombres = login_estandar.nombres_de_productos()
         assert nombres == sorted(nombres, reverse=True)
 
@@ -54,10 +57,11 @@ los precios de los productos queden en orden ascendente, comparando la lista
 de precios renderizada contra su versión ordenada.
 """)
 def test_orden_por_precio_ascendente(login_estandar):
-    with allure.step("1. Ordenar el catálogo por precio (menor a mayor)"):
-        login_estandar.ordenar_por("lohi")
-        allure.attach(login_estandar.driver.get_screenshot_as_png(), "1_OrdenPrecio", allure.attachment_type.PNG)
+    driver = login_estandar.driver
 
-    with allure.step("2. Validar orden ascendente de precios"):
+    with paso(driver, "1. Ordenar el catálogo por precio (menor a mayor)", "1_OrdenPrecio"):
+        login_estandar.ordenar_por("lohi")
+
+    with paso(driver, "2. Validar orden ascendente de precios", "2_OrdenPrecio"):
         precios = login_estandar.precios_de_productos()
         assert precios == sorted(precios)

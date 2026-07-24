@@ -8,12 +8,38 @@ vivían repetidas en cada page object. Importar desde cualquier page object:
 """
 
 import time
+from contextlib import contextmanager
+
+import allure
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import (
     StaleElementReferenceException,
     ElementNotInteractableException,
     TimeoutException,
 )
+
+
+@contextmanager
+def paso(driver, descripcion, nombre_captura=None):
+    """Envuelve un `allure.step` adjuntando SIEMPRE una captura de pantalla
+    al finalizar el paso, sin importar si terminó bien, con un assert fallido
+    o con una excepción a mitad de camino (ej. TimeoutException en un click).
+
+    Sin esto, un paso de solo-validación (un `assert` suelto) no dejaba
+    ninguna captura propia al fallar: solo quedaba la captura genérica de
+    `pytest_runtest_makereport` al final del test, desconectada del paso
+    puntual que rompió. Con `paso`, cada paso queda con su propia evidencia
+    visual en el reporte, igual que en el resto de la suite.
+    """
+    with allure.step(descripcion):
+        try:
+            yield
+        finally:
+            allure.attach(
+                driver.get_screenshot_as_png(),
+                nombre_captura or descripcion,
+                allure.attachment_type.PNG,
+            )
 
 
 def safe_click(wait, locator, retries=5):

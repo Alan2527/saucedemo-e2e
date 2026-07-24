@@ -1,6 +1,7 @@
 """Pruebas del módulo de autenticación."""
 import allure
 
+from helpers import paso
 from pages.login_page import LoginPage
 from utils import config
 
@@ -15,16 +16,14 @@ Que el título de la página es "Products".
 Que el catálogo renderiza al menos un producto.
 """)
 def test_login_exitoso(driver):
-    with allure.step("1. Iniciar sesión con usuario estándar"):
+    with paso(driver, "1. Iniciar sesión con usuario estándar", "1_Login"):
         inventario = LoginPage(driver).abrir().iniciar_sesion(
             config.USUARIO_ESTANDAR, config.PASSWORD
         )
-        allure.attach(driver.get_screenshot_as_png(), "1_Login", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar que aterriza en el inventario"):
+    with paso(driver, "2. Validar que aterriza en el inventario", "2_Inventario"):
         assert inventario.titulo() == "Products"
         assert inventario.cantidad_de_productos() > 0
-        allure.attach(driver.get_screenshot_as_png(), "2_Inventario", allure.attachment_type.PNG)
 
 
 @allure.feature("Autenticación")
@@ -36,12 +35,11 @@ y valida que el sistema rechaza el acceso mostrando el mensaje de error
 "Username and password do not match any user in this service" (sin loguear).
 """)
 def test_password_incorrecta(driver):
-    with allure.step("1. Iniciar sesión con contraseña incorrecta"):
+    with paso(driver, "1. Iniciar sesión con contraseña incorrecta", "1_Error"):
         login = LoginPage(driver).abrir()
         login.iniciar_sesion(config.USUARIO_ESTANDAR, "password_incorrecta")
-        allure.attach(driver.get_screenshot_as_png(), "1_Error", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar mensaje de error"):
+    with paso(driver, "2. Validar mensaje de error", "2_Error"):
         assert "Username and password do not match" in login.obtener_error()
 
 
@@ -54,12 +52,11 @@ por SauceDemo) y valida que el sistema bloquea el acceso mostrando el mensaje
 "Sorry, this user has been locked out.", en vez de dejarlo pasar.
 """)
 def test_usuario_bloqueado(driver):
-    with allure.step("1. Iniciar sesión con usuario bloqueado"):
+    with paso(driver, "1. Iniciar sesión con usuario bloqueado", "1_Bloqueado"):
         login = LoginPage(driver).abrir()
         login.iniciar_sesion(config.USUARIO_BLOQUEADO, config.PASSWORD)
-        allure.attach(driver.get_screenshot_as_png(), "1_Bloqueado", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar mensaje de bloqueo"):
+    with paso(driver, "2. Validar mensaje de bloqueo", "2_Bloqueado"):
         assert "Sorry, this user has been locked out" in login.obtener_error()
 
 
@@ -72,10 +69,9 @@ formulario exige el campo obligatorio, mostrando "Username is required" en
 vez de intentar autenticar con campos vacíos.
 """)
 def test_campos_vacios(driver):
-    with allure.step("1. Intentar iniciar sesión sin usuario ni contraseña"):
+    with paso(driver, "1. Intentar iniciar sesión sin usuario ni contraseña", "1_CamposVacios"):
         login = LoginPage(driver).abrir()
         login.iniciar_sesion("", "")
-        allure.attach(driver.get_screenshot_as_png(), "1_CamposVacios", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar mensaje de campo requerido"):
+    with paso(driver, "2. Validar mensaje de campo requerido", "2_CamposVacios"):
         assert "Username is required" in login.obtener_error()

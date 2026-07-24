@@ -1,6 +1,8 @@
 """Pruebas del flujo de compra completo."""
 import allure
 
+from helpers import paso
+
 
 @allure.feature("Checkout")
 @allure.story("Compra de punta a punta")
@@ -12,30 +14,29 @@ como el mensaje final de confirmación.
 """)
 def test_compra_exitosa(login_estandar):
     resultados = []
+    driver = login_estandar.driver
+    checkout = None
 
-    with allure.step("1. Agregar producto y avanzar al checkout"):
+    with paso(driver, "1. Agregar producto y avanzar al checkout", "1_Checkout"):
         checkout = (
             login_estandar
             .agregar_al_carrito("sauce labs backpack")
             .ir_al_carrito()
             .continuar_al_checkout()
         )
-        allure.attach(checkout.driver.get_screenshot_as_png(), "1_Checkout", allure.attachment_type.PNG)
 
-    with allure.step("2. Completar datos de envío"):
+    with paso(driver, "2. Completar datos de envío", "2_DatosEnvio"):
         checkout.completar_datos("Alan", "Herrera", "1000")
-        allure.attach(checkout.driver.get_screenshot_as_png(), "2_DatosEnvio", allure.attachment_type.PNG)
 
-    with allure.step("3. Validar resumen de compra"):
+    with paso(driver, "3. Validar resumen de compra", "3_Resumen"):
         total = checkout.obtener_total()
         assert "Total" in total
         resultados.append(f"Resumen OK: {total}")
 
-    with allure.step("4. Confirmar la compra"):
+    with paso(driver, "4. Confirmar la compra", "4_Confirmacion"):
         checkout.finalizar_compra()
-        allure.attach(checkout.driver.get_screenshot_as_png(), "4_Confirmacion", allure.attachment_type.PNG)
 
-    with allure.step("5. Validar mensaje de confirmación final"):
+    with paso(driver, "5. Validar mensaje de confirmación final", "5_Confirmacion"):
         mensaje = checkout.mensaje_de_confirmacion()
         assert mensaje == "Thank you for your order!"
         resultados.append(f"Confirmación OK: {mensaje}")
@@ -52,7 +53,10 @@ formulario lo exige, mostrando "First Name is required" en vez de dejar
 avanzar el flujo con datos incompletos.
 """)
 def test_nombre_requerido(login_estandar):
-    with allure.step("1. Avanzar al checkout sin completar el nombre"):
+    driver = login_estandar.driver
+    checkout = None
+
+    with paso(driver, "1. Avanzar al checkout sin completar el nombre", "1_SinNombre"):
         checkout = (
             login_estandar
             .agregar_al_carrito("sauce labs backpack")
@@ -60,9 +64,8 @@ def test_nombre_requerido(login_estandar):
             .continuar_al_checkout()
             .completar_datos("", "Herrera", "1000")
         )
-        allure.attach(checkout.driver.get_screenshot_as_png(), "1_SinNombre", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar mensaje de campo requerido"):
+    with paso(driver, "2. Validar mensaje de campo requerido", "2_SinNombre"):
         assert "First Name is required" in checkout.obtener_error()
 
 
@@ -75,7 +78,10 @@ que el formulario lo exige, mostrando "Postal Code is required" en vez de
 dejar avanzar el flujo con datos incompletos.
 """)
 def test_codigo_postal_requerido(login_estandar):
-    with allure.step("1. Avanzar al checkout sin completar el código postal"):
+    driver = login_estandar.driver
+    checkout = None
+
+    with paso(driver, "1. Avanzar al checkout sin completar el código postal", "1_SinCP"):
         checkout = (
             login_estandar
             .agregar_al_carrito("sauce labs backpack")
@@ -83,7 +89,6 @@ def test_codigo_postal_requerido(login_estandar):
             .continuar_al_checkout()
             .completar_datos("Alan", "Herrera", "")
         )
-        allure.attach(checkout.driver.get_screenshot_as_png(), "1_SinCP", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar mensaje de campo requerido"):
+    with paso(driver, "2. Validar mensaje de campo requerido", "2_SinCP"):
         assert "Postal Code is required" in checkout.obtener_error()

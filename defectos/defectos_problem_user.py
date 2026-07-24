@@ -10,6 +10,8 @@ pipeline avisa (xfail que pasa = failure).
 import allure
 import pytest
 
+from helpers import paso
+
 
 @allure.feature("Auditoría de defectos (problem_user)")
 @allure.story("Catálogo")
@@ -24,11 +26,12 @@ avisa.
 """)
 @pytest.mark.xfail(reason="Defecto conocido: problem_user ve la misma imagen 404 en los 6 productos", strict=True)
 def test_imagenes_unicas(login_problema):
-    with allure.step("1. Revisar las imágenes del catálogo"):
-        urls = login_problema.urls_de_imagenes()
-        allure.attach(login_problema.driver.get_screenshot_as_png(), "1_Catalogo", allure.attachment_type.PNG)
+    driver = login_problema.driver
 
-    with allure.step("2. Validar que cada producto tenga imagen propia"):
+    with paso(driver, "1. Revisar las imágenes del catálogo", "1_Catalogo"):
+        urls = login_problema.urls_de_imagenes()
+
+    with paso(driver, "2. Validar que cada producto tenga imagen propia", "2_Catalogo"):
         assert len(set(urls)) == len(urls), f"Las 6 imágenes apuntan a: {set(urls)}"
 
 
@@ -43,11 +46,12 @@ por la misma razón que el resto de esta suite.
 """)
 @pytest.mark.xfail(reason="Defecto conocido: problem_user no puede reordenar el catálogo", strict=True)
 def test_ordenamiento(login_problema):
-    with allure.step("1. Intentar ordenar el catálogo Z→A"):
-        login_problema.ordenar_por("za")
-        allure.attach(login_problema.driver.get_screenshot_as_png(), "1_Orden", allure.attachment_type.PNG)
+    driver = login_problema.driver
 
-    with allure.step("2. Validar orden alfabético descendente"):
+    with paso(driver, "1. Intentar ordenar el catálogo Z→A", "1_Orden"):
+        login_problema.ordenar_por("za")
+
+    with paso(driver, "2. Validar orden alfabético descendente", "2_Orden"):
         nombres = login_problema.nombres_de_productos()
         assert nombres == sorted(nombres, reverse=True)
 
@@ -64,7 +68,10 @@ que el resto de esta suite.
 """)
 @pytest.mark.xfail(reason="Defecto conocido: el campo Last Name de problem_user no retiene lo tipeado", strict=True)
 def test_apellido_en_checkout(login_problema):
-    with allure.step("1. Completar el checkout con datos válidos"):
+    driver = login_problema.driver
+    checkout = None
+
+    with paso(driver, "1. Completar el checkout con datos válidos", "1_Checkout"):
         checkout = (
             login_problema
             .agregar_al_carrito("sauce labs backpack")
@@ -72,9 +79,8 @@ def test_apellido_en_checkout(login_problema):
             .continuar_al_checkout()
             .completar_datos("Alan", "Herrera", "1000")
         )
-        allure.attach(checkout.driver.get_screenshot_as_png(), "1_Checkout", allure.attachment_type.PNG)
 
-    with allure.step("2. Validar que el flujo avance al resumen de compra"):
+    with paso(driver, "2. Validar que el flujo avance al resumen de compra", "2_Checkout"):
         # Con datos válidos el flujo debería avanzar al resumen, en vez de
         # quedar atascado por el campo Last Name que no retiene el valor.
         assert "Total" in checkout.obtener_total()

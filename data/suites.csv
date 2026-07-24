@@ -1,15 +1,83 @@
 "Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"passed","Fri Jul 24 15:21:21 UTC 2026","Fri Jul 24 15:21:21 UTC 2026","608","login","login_saucedemo","","","","test_usuario_bloqueado","
+"passed","Fri Jul 24 15:58:07 UTC 2026","Fri Jul 24 15:58:07 UTC 2026","183","inventario","inventario_catalogo","","","","test_cantidad_de_productos","
+Valida que el catálogo muestre los 6 productos esperados y que cada uno tenga
+su propia imagen (no todas apuntando a la misma URL, defecto conocido de
+problem_user — ver suite `defectos`).
+"
+"failed","Fri Jul 24 15:55:18 UTC 2026","Fri Jul 24 15:55:18 UTC 2026","320","carrito","carrito_gestion","","","","test_multiples_productos","
+Agrega tres productos distintos al carrito en la misma sesión y valida que el
+badge acumule correctamente el total (3), en vez de sobreescribir o perder
+el conteo de altas previas.
+"
+"passed","Fri Jul 24 15:58:13 UTC 2026","Fri Jul 24 15:58:14 UTC 2026","527","login","login_saucedemo","","","","test_campos_vacios","
+Intenta iniciar sesión sin completar usuario ni contraseña y valida que el
+formulario exige el campo obligatorio, mostrando ""Username is required"" en
+vez de intentar autenticar con campos vacíos.
+"
+"passed","Fri Jul 24 15:58:11 UTC 2026","Fri Jul 24 15:58:12 UTC 2026","577","login","login_saucedemo","","","","test_password_incorrecta","
+Intenta iniciar sesión con el usuario estándar pero una contraseña incorrecta,
+y valida que el sistema rechaza el acceso mostrando el mensaje de error
+""Username and password do not match any user in this service"" (sin loguear).
+"
+"failed","Fri Jul 24 15:55:16 UTC 2026","Fri Jul 24 15:55:17 UTC 2026","285","carrito","carrito_gestion","","","","test_quitar_producto","
+Agrega ""Sauce Labs Bike Light"" al carrito y luego lo quita desde el mismo
+catálogo, validando que el badge del carrito vuelva a cero (sin quedar un
+contador ""fantasma"" tras la baja).
+"
+"broken","Fri Jul 24 15:54:35 UTC 2026","Fri Jul 24 15:55:15 UTC 2026","40496","carrito","carrito_gestion","","","","test_producto_en_carrito","
+Agrega ""Sauce Labs Backpack"" al carrito y navega a la página del carrito,
+validando que el producto agregado efectivamente aparezca listado ahí (no
+solo que el badge suba, sino que el contenido real del carrito sea correcto).
+"
+"skipped","Fri Jul 24 15:57:26 UTC 2026","Fri Jul 24 15:58:06 UTC 2026","40480","defectos","defectos_problem_user","","","","test_apellido_en_checkout","
+Documenta un defecto conocido: con problem_user, el campo Last Name del
+formulario de checkout no retiene el valor tipeado. El test completa el
+formulario con datos válidos y afirma el comportamiento CORRECTO (el flujo
+avanza al resumen de compra); está marcado xfail estricto por la misma razón
+que el resto de esta suite.
+"
+"passed","Fri Jul 24 15:58:12 UTC 2026","Fri Jul 24 15:58:13 UTC 2026","572","login","login_saucedemo","","","","test_usuario_bloqueado","
 Intenta iniciar sesión con locked_out_user (usuario deshabilitado a propósito
 por SauceDemo) y valida que el sistema bloquea el acceso mostrando el mensaje
 ""Sorry, this user has been locked out."", en vez de dejarlo pasar.
 "
-"broken","Fri Jul 24 15:19:50 UTC 2026","Fri Jul 24 15:20:30 UTC 2026","40625","checkout","checkout_flujo_compra","","","","test_codigo_postal_requerido","
+"passed","Fri Jul 24 15:54:34 UTC 2026","Fri Jul 24 15:54:34 UTC 2026","245","carrito","carrito_gestion","","","","test_agregar_producto","
+Agrega ""Sauce Labs Backpack"" al carrito desde el catálogo y valida que el
+badge del ícono de carrito se actualice a 1, reflejando el alta en tiempo real.
+"
+"skipped","Fri Jul 24 15:57:25 UTC 2026","Fri Jul 24 15:57:25 UTC 2026","251","defectos","defectos_problem_user","","","","test_ordenamiento","
+Documenta un defecto conocido: con problem_user, el selector de orden
+""Name (Z to A)"" no reordena el catálogo. El test afirma el comportamiento
+CORRECTO (orden alfabético descendente real) y está marcado xfail estricto
+por la misma razón que el resto de esta suite.
+"
+"passed","Fri Jul 24 15:58:08 UTC 2026","Fri Jul 24 15:58:09 UTC 2026","258","inventario","inventario_catalogo","","","","test_orden_alfabetico_descendente","
+Selecciona el ordenamiento ""Name (Z to A)"" en el catálogo y valida que los
+nombres de los productos queden efectivamente en orden alfabético
+descendente, comparando el listado renderizado contra su versión ordenada.
+"
+"broken","Fri Jul 24 15:56:01 UTC 2026","Fri Jul 24 15:56:41 UTC 2026","40474","checkout","checkout_flujo_compra","","","","test_nombre_requerido","
+Intenta avanzar el checkout dejando el campo Nombre vacío y valida que el
+formulario lo exige, mostrando ""First Name is required"" en vez de dejar
+avanzar el flujo con datos incompletos.
+"
+"passed","Fri Jul 24 15:58:10 UTC 2026","Fri Jul 24 15:58:11 UTC 2026","790","login","login_saucedemo","","","","test_login_exitoso","
+Inicia sesión con el usuario estándar (standard_user) y valida:
+Que el login redirige correctamente al inventario (inventory.html).
+Que el título de la página es ""Products"".
+Que el catálogo renderiza al menos un producto.
+"
+"broken","Fri Jul 24 15:55:19 UTC 2026","Fri Jul 24 15:56:00 UTC 2026","40554","checkout","checkout_flujo_compra","","","","test_compra_exitosa","
+Recorre el flujo completo de compra: agregar producto, ir al carrito,
+completar los datos de envío y confirmar. Valida tanto el resumen (Total)
+como el mensaje final de confirmación.
+"
+"broken","Fri Jul 24 15:56:42 UTC 2026","Fri Jul 24 15:57:23 UTC 2026","40478","checkout","checkout_flujo_compra","","","","test_codigo_postal_requerido","
 Intenta avanzar el checkout dejando el campo Código Postal vacío y valida
 que el formulario lo exige, mostrando ""Postal Code is required"" en vez de
 dejar avanzar el flujo con datos incompletos.
 "
-"skipped","Fri Jul 24 15:20:31 UTC 2026","Fri Jul 24 15:20:31 UTC 2026","124","defectos","defectos_problem_user","","","","test_imagenes_unicas","
+"skipped","Fri Jul 24 15:57:24 UTC 2026","Fri Jul 24 15:57:24 UTC 2026","169","defectos","defectos_problem_user","","","","test_imagenes_unicas","
 Documenta un defecto conocido: con problem_user, los 6 productos del
 catálogo muestran la misma imagen (rota/404) en vez de la imagen propia de
 cada producto. El test afirma el comportamiento CORRECTO (imágenes únicas) y
@@ -17,76 +85,8 @@ está marcado xfail estricto: mientras el bug exista, aparece en el reporte
 como defecto documentado sin romper el pipeline; si se corrige, el pipeline
 avisa.
 "
-"passed","Fri Jul 24 15:21:22 UTC 2026","Fri Jul 24 15:21:22 UTC 2026","596","login","login_saucedemo","","","","test_campos_vacios","
-Intenta iniciar sesión sin completar usuario ni contraseña y valida que el
-formulario exige el campo obligatorio, mostrando ""Username is required"" en
-vez de intentar autenticar con campos vacíos.
-"
-"broken","Fri Jul 24 15:17:42 UTC 2026","Fri Jul 24 15:18:23 UTC 2026","40547","carrito","carrito_gestion","","","","test_producto_en_carrito","
-Agrega ""Sauce Labs Backpack"" al carrito y navega a la página del carrito,
-validando que el producto agregado efectivamente aparezca listado ahí (no
-solo que el badge suba, sino que el contenido real del carrito sea correcto).
-"
-"skipped","Fri Jul 24 15:20:34 UTC 2026","Fri Jul 24 15:21:14 UTC 2026","40613","defectos","defectos_problem_user","","","","test_apellido_en_checkout","
-Documenta un defecto conocido: con problem_user, el campo Last Name del
-formulario de checkout no retiene el valor tipeado. El test completa el
-formulario con datos válidos y afirma el comportamiento CORRECTO (el flujo
-avanza al resumen de compra); está marcado xfail estricto por la misma razón
-que el resto de esta suite.
-"
-"passed","Fri Jul 24 15:17:41 UTC 2026","Fri Jul 24 15:17:41 UTC 2026","288","carrito","carrito_gestion","","","","test_agregar_producto","
-Agrega ""Sauce Labs Backpack"" al carrito desde el catálogo y valida que el
-badge del ícono de carrito se actualice a 1, reflejando el alta en tiempo real.
-"
-"broken","Fri Jul 24 15:19:08 UTC 2026","Fri Jul 24 15:19:49 UTC 2026","40536","checkout","checkout_flujo_compra","","","","test_nombre_requerido","
-Intenta avanzar el checkout dejando el campo Nombre vacío y valida que el
-formulario lo exige, mostrando ""First Name is required"" en vez de dejar
-avanzar el flujo con datos incompletos.
-"
-"passed","Fri Jul 24 15:21:20 UTC 2026","Fri Jul 24 15:21:20 UTC 2026","626","login","login_saucedemo","","","","test_password_incorrecta","
-Intenta iniciar sesión con el usuario estándar pero una contraseña incorrecta,
-y valida que el sistema rechaza el acceso mostrando el mensaje de error
-""Username and password do not match any user in this service"" (sin loguear).
-"
-"broken","Fri Jul 24 15:18:26 UTC 2026","Fri Jul 24 15:19:07 UTC 2026","40535","checkout","checkout_flujo_compra","","","","test_compra_exitosa","
-Recorre el flujo completo de compra: agregar producto, ir al carrito,
-completar los datos de envío y confirmar. Valida tanto el resumen (Total)
-como el mensaje final de confirmación.
-"
-"passed","Fri Jul 24 15:18:24 UTC 2026","Fri Jul 24 15:18:24 UTC 2026","269","carrito","carrito_gestion","","","","test_quitar_producto","
-Agrega ""Sauce Labs Bike Light"" al carrito y luego lo quita desde el mismo
-catálogo, validando que el badge del carrito vuelva a cero (sin quedar un
-contador ""fantasma"" tras la baja).
-"
-"passed","Fri Jul 24 15:21:15 UTC 2026","Fri Jul 24 15:21:15 UTC 2026","179","inventario","inventario_catalogo","","","","test_cantidad_de_productos","
-Valida que el catálogo muestre los 6 productos esperados y que cada uno tenga
-su propia imagen (no todas apuntando a la misma URL, defecto conocido de
-problem_user — ver suite `defectos`).
-"
-"passed","Fri Jul 24 15:21:16 UTC 2026","Fri Jul 24 15:21:17 UTC 2026","280","inventario","inventario_catalogo","","","","test_orden_alfabetico_descendente","
-Selecciona el ordenamiento ""Name (Z to A)"" en el catálogo y valida que los
-nombres de los productos queden efectivamente en orden alfabético
-descendente, comparando el listado renderizado contra su versión ordenada.
-"
-"passed","Fri Jul 24 15:21:18 UTC 2026","Fri Jul 24 15:21:18 UTC 2026","275","inventario","inventario_catalogo","","","","test_orden_por_precio_ascendente","
+"passed","Fri Jul 24 15:58:09 UTC 2026","Fri Jul 24 15:58:10 UTC 2026","279","inventario","inventario_catalogo","","","","test_orden_por_precio_ascendente","
 Selecciona el ordenamiento ""Price (low to high)"" en el catálogo y valida que
 los precios de los productos queden en orden ascendente, comparando la lista
 de precios renderizada contra su versión ordenada.
-"
-"failed","Fri Jul 24 15:18:25 UTC 2026","Fri Jul 24 15:18:25 UTC 2026","361","carrito","carrito_gestion","","","","test_multiples_productos","
-Agrega tres productos distintos al carrito en la misma sesión y valida que el
-badge acumule correctamente el total (3), en vez de sobreescribir o perder
-el conteo de altas previas.
-"
-"skipped","Fri Jul 24 15:20:32 UTC 2026","Fri Jul 24 15:20:33 UTC 2026","220","defectos","defectos_problem_user","","","","test_ordenamiento","
-Documenta un defecto conocido: con problem_user, el selector de orden
-""Name (Z to A)"" no reordena el catálogo. El test afirma el comportamiento
-CORRECTO (orden alfabético descendente real) y está marcado xfail estricto
-por la misma razón que el resto de esta suite.
-"
-"passed","Fri Jul 24 15:21:18 UTC 2026","Fri Jul 24 15:21:19 UTC 2026","924","login","login_saucedemo","","","","test_login_exitoso","
-Inicia sesión con el usuario estándar (standard_user) y valida:
-Que el login redirige correctamente al inventario (inventory.html).
-Que el título de la página es ""Products"".
-Que el catálogo renderiza al menos un producto.
 "
